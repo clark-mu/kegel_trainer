@@ -639,7 +639,8 @@
                         <input type="number" id="totalCyclesInput" value="15" min="1" max="99" />
                         <button class="inc-btn" data-target="totalCycles">+</button>
                     </div>
-                    <div class="unit-hint" data-i18n="hintSeconds">组</div>
+                    <!-- 修复：单位改为 hintCycles，中文“组”/英文“cycles” -->
+                    <div class="unit-hint" data-i18n="hintCycles">组</div>
                 </div>
             </div>
 
@@ -677,6 +678,7 @@
                     btnResume: '▶ 继续',
                     btnRestart: '↻ 再来',
                     hintSeconds: '秒',
+                    hintCycles: '组',        // 新增循环单位
                     toggleLang: 'English',
                 },
                 en: {
@@ -698,6 +700,7 @@
                     btnResume: '▶ Resume',
                     btnRestart: '↻ Again',
                     hintSeconds: 'sec',
+                    hintCycles: 'cycles',    // 新增循环单位
                     toggleLang: '中文',
                 }
             };
@@ -777,8 +780,7 @@
                     if (key) {
                         // 跳过动态更新的元素 (phaseLabel, timeUnit, progressInfo, startBtn 由 updateDisplay 控制)
                         // 但我们可以更新静态部分，例如 header、settings labels 等
-                        // 但 phaseLabel, timeUnit, progressInfo, startBtn 我们会通过 updateDisplay 刷新，
-                        // 不过为了保险，这里排除这几个动态ID
+                        // 不过为了保险，排除这几个动态ID
                         const id = el.id;
                         if (id === 'phaseLabel' || id === 'startBtn' || el === timeUnit || el === progressInfo) {
                             return;
@@ -801,8 +803,6 @@
                 document.querySelectorAll('.settings-actions .btn[data-i18n]').forEach(el => {
                     el.textContent = t(el.dataset.i18n);
                 });
-                // 更新重置按钮 title (可选的)
-                resetBtn.title = t('btnReset') || '↺';
             }
 
             // ============================================================
@@ -851,8 +851,6 @@
                     current: currentVal,
                     total: totalCycles
                 });
-                // 重新绑定强标签 (虽然innerHTML已经包含了，但我们需要确保引用有效)
-                // 但因为我们用innerHTML重建，之前的引用会失效，但没关系，我们只显示。
 
                 // --- 完成状态样式 ---
                 timerSection.classList.toggle('celebrate', status === 'completed');
@@ -1049,7 +1047,6 @@
                 updateStaticLanguage();
                 // 更新动态显示 (按钮、阶段等)
                 updateDisplay();
-                // 更新设置面板里的输入框提示 (已经通过 updateStaticLanguage 更新)
                 // 更新 langToggle 文字
                 langToggle.textContent = t('toggleLang');
                 // 播放点击反馈
